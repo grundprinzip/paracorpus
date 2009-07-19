@@ -1,0 +1,7 @@
+# Parallel Corpus Search
+
+This is a small set of python scripts that allows to search a parallel corpus.
+The basic prerequisite is that the data must be available in an aligned form.
+This means that the parallel corpus files must be in different subdirectories
+and there each file name has a replica in the other language. In addition
+each line in the one language has a representation in the other file.
