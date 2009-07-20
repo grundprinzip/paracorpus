@@ -15,9 +15,13 @@ Afterwards you will need to build and install the PyQt4 Wrapper from
 
 http://www.riverbankcomputing.co.uk/software/pyqt/download
 
-Using Windows is much simpler, just install 
+Using Windows is much simpler, just install Python first 
 
-http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-Py3.1-gpl-4.5.2-1.exe
+http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi
+
+and than
+
+http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-Py2.6-gpl-4.5.2-1.exe
 
 and be happy.
 
