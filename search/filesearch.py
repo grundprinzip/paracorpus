@@ -1,11 +1,12 @@
+import threading
 import os, re
 from search import base
 from utils import thread_pool as tp
 
 # Search Config and options
-POOL_SIZE = 3
+POOL_SIZE = 5
 FILE_TYPE_LIST = (".txt", ".doc")
-DEFAULT_OPTIONS = {"downcase" : True, "remove_empty_lines": True, "remove_xml": True}
+DEFAULT_OPTIONS = {"remove_empty_lines": True, "remove_xml": True}
 
 def remove_html_tags(data):
     p = re.compile(r'<.*?>')
@@ -22,22 +23,20 @@ def search_task(data):
     result = []
 
     file_name = data[0]
-    search_exp = re.compile(data[1])
+    search_exp = re.compile(data[1], re.I)
+    lang = data[2]
 
     # Get the search options
-    if len(data) == 2:
+    if len(data) == 3:
         options = DEFAULT_OPTIONS
     else:
-        options.update(data[2])
+        options.update(data[3])
 
     fid = open(file_name)
     try:
-        line_counter = -1
+        line_counter = 0 
         for line in fid:
             line_counter += 1
-            line = line.strip()
-            if options["downcase"]:
-                line = line.lower()
             if options["remove_empty_lines"] and len(line) == 0:
                 continue
             if options["remove_empty_lines"]:
@@ -45,7 +44,7 @@ def search_task(data):
 
             # Compile the expression and search
             for m in re.finditer(search_exp, line):
-                tmp = base.SearchResult(data[1], line, file_name, line_counter, m.start(), m.end())
+                tmp = base.SearchResult(data[1], lang, "", file_name, line_counter, m.start(), m.end())
                 result.append(tmp)
 
 
@@ -63,6 +62,9 @@ class FileSearch(base.Base):
     """
 
     def start(self, handler=None):
+
+        self.__append_result_lock = threading.Condition(threading.Lock())
+
         self.started = True
         self.finished = False
         self.result = []
@@ -73,7 +75,7 @@ class FileSearch(base.Base):
 
         self.pool = tp.ThreadPool(POOL_SIZE)
         for f in self.files:
-            self.pool.queueTask(search_task, (f, self.options["what"]), self.append_result)
+            self.pool.queueTask(search_task, (f, self.options["what"], self.options["lang1"]), self.append_result)
         self.pool.joinAll()
 
         # Reset State
@@ -81,7 +83,9 @@ class FileSearch(base.Base):
         self.started = False
 
     def append_result(self, res):
+        self.__append_result_lock.acquire()
         self.result += res
+        self.__append_result_lock.release()
 
     def get_files(self):
         # Create a list of all files to scan

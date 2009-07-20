@@ -4,12 +4,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 import unittest
+import search.base
 import search.filesearch as fs
 
 class TestSerarch(unittest.TestCase):
 
     def setUp(self):
-        self.data = ["test/top/de/f3.txt", "andere"]
+        self.data = ["test/top/de/f3.txt", "andere", "de"]
         self.subject = fs.FileSearch(lang1="test/top/de")
 
     def test_get_files(self):
@@ -25,17 +26,29 @@ class TestSerarch(unittest.TestCase):
         result = fs.search_task(self.data)
 
         t = result[0]
-        self.assertEqual(t.offset, 3)
+        #print t
+        self.assertEqual(t.offset, 4)
 
         t = result[1]
-        self.assertEqual(t.offset, 5)
+        self.assertEqual(t.offset, 6)
 
 
     def test_search_with_mult_inc_on_file(self):
-        result = fs.search_task(["test/top/de/f3.txt", "es"])
+        result = fs.search_task(["test/top/de/f3.txt", "es", "de"])
         self.assertEqual(len(result), 3)
-        self.assertEqual(result[0].offset, 0)
-        self.assertEqual(result[1].offset, 0)
+        self.assertEqual(result[0].offset, 1)
+        self.assertEqual(result[1].offset, 1)
+
+    def test_other_offset(self):
+        si = search.base.SearchIndex("test/top", searcher=fs.FileSearch)
+        res = si.search("martinmartin", "de")
+        self.assertEqual(si.find_ref_for_result("nl", res[0]), "SaskiaSaskia")
+
+    def test_self_offset(self):
+        si = search.base.SearchIndex("test/top", searcher=fs.FileSearch)
+        res = si.search("martinmartin", "de")
+        
+        self.assertEqual(si.find_line_for_result(res[0]), "MartinMartin")
 
 
 if __name__ == "__main__":

@@ -1,14 +1,19 @@
 import search.filesearch as fs
+from search.base import *
+from time import time
 
 
-s = fs.FileSearch(lang1="test/top/de", what="andere")
-
-print s.get_files()
+si = SearchIndex("de-nl", searcher=fs.FileSearch)
 
 print "Starting execution..."
-s.start()
 
-print "Found %d results" % len(s.result)
+start = time()
+res = si.search("Land", "de")
+end = time()
 
-for r in s.result:
-    print r
+print "Found %d results in %d" % (len(res), end-start)
+
+si.store()
+
+#for r in s.result:
+#    print r
