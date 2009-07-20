@@ -5,3 +5,18 @@ The basic prerequisite is that the data must be available in an aligned form.
 This means that the parallel corpus files must be in different subdirectories
 and there each file name has a replica in the other language. In addition
 each line in the one language has a representation in the other file.
+
+For its UI the program uses QT and PyQt4 so you have to install it
+first. For Mac and Linux download the Qt framework libraries from 
+
+http://www.qtsoftware.com/downloads
+
+Afterwards you will need to build and install the PyQt4 Wrapper from
+
+http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+Using Windows is much simpler, just install 
+
+http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-Py3.1-gpl-4.5.2-1.exe
+
+and be happy.
