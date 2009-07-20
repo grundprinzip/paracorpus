@@ -96,6 +96,7 @@ class SearchIndex(object):
     def store(self):
         fid = open("search_index_.idx", "w+")
         pickle.Pickler(fid, pickle.HIGHEST_PROTOCOL).dump(self)
+        fid.close()
 
     def find_ref_for_result(self, lang, match):
         """
@@ -114,4 +115,6 @@ class SearchIndex(object):
     @classmethod 
     def load(self, file):
         fid = open(file, "rb")
-        return pickle.Unpickler(fid).load()
+        obj = pickle.Unpickler(fid).load()
+        fid.close()
+        return obj

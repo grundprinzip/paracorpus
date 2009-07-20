@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import threading
 import os, re
+import codecs
 from search import base
 from utils import thread_pool as tp
 
 # Search Config and options
-POOL_SIZE = 5
+POOL_SIZE = 3
 FILE_TYPE_LIST = (".txt", ".doc")
 DEFAULT_OPTIONS = {"remove_empty_lines": True, "remove_xml": True}
 
@@ -32,7 +35,7 @@ def search_task(data):
     else:
         options.update(data[3])
 
-    fid = open(file_name)
+    fid = codecs.open(file_name, "r", "utf-8")
     try:
         line_counter = 0 
         for line in fid:
@@ -76,6 +79,8 @@ class FileSearch(base.Base):
         self.pool = tp.ThreadPool(POOL_SIZE)
         for f in self.files:
             self.pool.queueTask(search_task, (f, self.options["what"], self.options["lang1"]), self.append_result)
+        
+        
         self.pool.joinAll()
 
         # Reset State
